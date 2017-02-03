@@ -24,7 +24,7 @@ repositories:
     name: fuel-ccp-stacklight
   - git_url: https://github.com/kbespalov/fuel-ccp-simulator
     name: fuel-ccp-simulator
-  - git_url: https://git.openstack.org/openstack/fuel-ccp-zmq
+  - git_url: https://github.com/kbespalov/fuel-ccp-zmq
     name: fuel-ccp-zmq
 
 configs:
