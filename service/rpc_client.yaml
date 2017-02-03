@@ -18,7 +18,7 @@ service:
                 -tg {% for t in range(simulator.topics) %}{% for s in range(simulator.servers) %}topic_{{t}}.server_{{s}} {%endfor%}{%endfor%}
                 --config-file /etc/oslo/simulator.conf rpc-client
                 -p {{simulator.client.threads}} -m {{ simulator.messages }}
-                --sync call --timeout {{ simulator.client.threads }}
+                --sync call --timeout {{ simulator.client.timeout }}
         dependencies:
           - rpc-server
           - zmq-proxy
