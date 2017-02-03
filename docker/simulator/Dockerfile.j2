@@ -1,0 +1,4 @@
+FROM {{ namespace }}/openstack-base:{{ tag }}
+MAINTAINER {{ maintainer }}
+
+RUN /var/lib/microservices/venv/bin/pip install --upgrade influxdb

@@ -1,0 +1,38 @@
+dsl_version: 0.2.0
+
+service:
+  name: rpc-client
+  containers:
+    - name: simulator
+      image: simulator
+      probes:
+        readiness: "true"
+      daemon:
+        files:
+          - messages_length
+          - simulator-conf
+          - simulator
+        command: >
+                python /messaging/simulator.py
+                --json /var/log/ccp/simulator/client.json
+                -tg {% for t in range(simulator.topics) %}{% for s in range(simulator.servers) %}topic_{{t}}.server_{{s}} {%endfor%}{%endfor%}
+                --config-file /etc/oslo/simulator.conf rpc-client
+                -p {{simulator.client.threads}} -m {{ simulator.messages }}
+                --sync call --timeout {{ simulator.client.threads }}
+        dependencies:
+          - rpc-server
+          - zmq-proxy
+      volumes:
+      - name: simulator-logs
+        path: "/var/log/ccp/simulator/"
+        type: host
+files:
+  simulator-conf:
+    path: /etc/oslo/simulator.conf
+    content: simulator.conf.j2
+  simulator:
+    path: /messaging/simulator.py
+    content: simulator.py
+  messages_length:
+    path: /messaging/messages_length.yaml
+    content: messages_length.yaml

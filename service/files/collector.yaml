@@ -1,0 +1,6 @@
+stats_dir: /var/log/ccp/simulator
+influxdb:
+  username: admin
+  password: admin
+  host: influxdb
+  database: simulator

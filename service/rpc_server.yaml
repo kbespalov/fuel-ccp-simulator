@@ -1,0 +1,48 @@
+dsl_version: 0.2.0
+
+service:
+  name: rpc-server
+  containers:
+    # {% for topic in range(simulator.topics) %}
+    # {% for server in range(simulator.servers) %}
+    - name: rpc-server-tp-{{topic}}-srv-{{server}}
+      image: simulator
+      probes:
+        readiness: "true"
+      daemon:
+        files:
+            - messages_length
+            - simulator-conf
+            - simulator
+            - collector
+            - collector-config
+        command: >
+              python /messaging/simulator.py
+              --json /var/log/ccp/simulator/server_{{topic}}_{{server}}.json
+              --config-file /etc/oslo/simulator.conf
+              -tp topic_{{topic}} -s server_{{server}}
+              rpc-server ; python /messaging/collector.py -f server_{{ topic }}_{{ server }}.json -t {{ simulator.influxdb_tag }}
+        dependencies:
+          - "{{ messaging.dependencies[messaging.backend.rpc] }}"
+      volumes:
+      - name: simulator-logs
+        path: "/var/log/ccp/simulator/"
+        type: host
+    # {% endfor %}
+    # {% endfor %}
+files:
+  simulator-conf:
+    path: /etc/oslo/simulator.conf
+    content: simulator.conf.j2
+  simulator:
+    path: /messaging/simulator.py
+    content: simulator.py
+  collector:
+    path: /messaging/collector.py
+    content: collector.py
+  collector-config:
+    path: /messaging/collector.yaml
+    content: collector.yaml
+  messages_length:
+    path: /messaging/messages_length.yaml
+    content: messages_length.yaml
