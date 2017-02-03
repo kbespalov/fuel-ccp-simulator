@@ -1,0 +1,74 @@
+images:
+  namespace: simulator
+kubernetes:
+  namespace: simulator
+builder:
+  push: True
+
+repositories:
+  path: /home/vagrant/oz/simulator_only_repositories
+  repos:
+  - git_url: https://git.openstack.org/openstack/fuel-ccp-debian-base
+    name: fuel-ccp-debian-base
+  - git_url: https://git.openstack.org/openstack/fuel-ccp-entrypoint
+    name: fuel-ccp-entrypoint
+  - git_url: https://git.openstack.org/openstack/fuel-ccp-etcd
+    name: fuel-ccp-etcd
+  - git_url: https://git.openstack.org/openstack/fuel-ccp-grafana
+    name: fuel-ccp-grafana
+  - git_url: https://git.openstack.org/openstack/fuel-ccp-openstack-base
+    name: fuel-ccp-openstack-base
+  - git_url: https://git.openstack.org/openstack/fuel-ccp-rabbitmq
+    name: fuel-ccp-rabbitmq
+  - git_url: https://git.openstack.org/openstack/fuel-ccp-stacklight
+    name: fuel-ccp-stacklight
+  - git_url: https://github.com/kbespalov/fuel-ccp-simulator
+    name: fuel-ccp-simulator
+  - git_url: https://git.openstack.org/openstack/fuel-ccp-zmq
+    name: fuel-ccp-zmq
+
+configs:
+  simulator:
+    influxdb_tag: zmq
+    topics: 1
+    servers: 1
+    messages: 3000
+    client:
+      timeout: 60
+      threads: 32
+  messaging:
+    backend:
+       rpc: zmq
+       nofifications: rabbit
+  private_interface: ens3
+
+replicas:
+  zmq-proxy: 3
+
+nodes:
+  node1$:
+    roles:
+      - core
+  node2$:
+    roles:
+      - server
+  node3$:
+    roles:
+      - client
+  node([4-9])$:
+    roles:
+      - messaging
+
+roles:
+  messaging:
+    - rabbitmq
+    - zmq-proxy
+  server:
+    - rpc-server
+  client:
+    - rpc-client
+  core:
+    - etcd
+    - grafana
+    - influxdb
+    - redis
