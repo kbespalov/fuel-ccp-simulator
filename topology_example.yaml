@@ -4,7 +4,9 @@ kubernetes:
   namespace: simulator
 builder:
   push: True
-
+registry:
+  address: "127.0.0.1:31500"
+  
 repositories:
   path: /home/vagrant/oz/simulator_only_repositories
   repos:
