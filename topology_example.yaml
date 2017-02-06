@@ -6,9 +6,9 @@ builder:
   push: True
 registry:
   address: "127.0.0.1:31500"
-  
+
 repositories:
-  path: /home/vagrant/oz/simulator_only_repositories
+  path: /home/vagrant/simulator/repositories
   repos:
   - git_url: https://git.openstack.org/openstack/fuel-ccp-debian-base
     name: fuel-ccp-debian-base
@@ -31,21 +31,24 @@ repositories:
 
 configs:
   simulator:
-    influxdb_tag: zmq
+    influxdb_tag: rabbit_1_client_1_server
     topics: 1
     servers: 1
     messages: 3000
     client:
       timeout: 60
       threads: 32
+      sync: call
+
+# backends: zmq or rabbit
   messaging:
     backend:
-       rpc: zmq
-       nofifications: rabbit
+       rpc: rabbit
   private_interface: ens3
 
 replicas:
   zmq-proxy: 3
+  rpc-client: 1
 
 nodes:
   node1$:
@@ -54,13 +57,12 @@ nodes:
   node2$:
     roles:
       - server
-  node3$:
+  node(3|10|11|12)$:
     roles:
       - client
-  node([4-9])$:
+  node([4-6])$:
     roles:
       - messaging
-
 roles:
   messaging:
     - rabbitmq
