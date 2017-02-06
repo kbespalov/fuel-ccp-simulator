@@ -21,7 +21,7 @@ service:
                 --sync call --timeout {{ simulator.client.timeout }}
         dependencies:
           - rpc-server
-          - zmq-proxy
+          - "{{ messaging.dependencies[messaging.backend.rpc] }}"
       volumes:
       - name: simulator-logs
         path: "/var/log/ccp/simulator/"
